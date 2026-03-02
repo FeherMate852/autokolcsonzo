@@ -1,0 +1,17 @@
+# Dependency directories
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment variables
+.env
+server/.env
+
+# Build outputs
+client/dist/
+client/build/
+
+# IDE files
+.vscode/
+.idea/
+DS_Store

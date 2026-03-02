@@ -1,0 +1,1 @@
+Ez a projekt a szakdolgozatom keretében készül. Egy modern, full-stack autókölcsönző rendszert valósít meg.
