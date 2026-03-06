@@ -7,6 +7,7 @@ import Hero from './components/Hero';
 import CarCard from './components/CarCard';
 import Footer from './components/Footer';
 import Register from './components/Register';
+import Login from './components/Login';
 
 function App() {
   const [cars, setCars] = useState([]);
@@ -61,6 +62,7 @@ function App() {
             } />
 
             <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
         </main>
 

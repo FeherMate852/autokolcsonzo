@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
   const { full_name, email, password } = req.body;
@@ -22,5 +23,48 @@ exports.register = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Szerver hiba a regisztráció során." });
+  }
+};
+
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const userResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    
+    if (userResult.rows.length === 0) {
+      return res.status(401).json({ message: "Hibás email vagy jelszó!" });
+    }
+
+    const user = userResult.rows[0];
+
+    // Összehasonlítjuk a beírt jelszót a tárolt hash-el
+    const isMatch = await bcrypt.compare(password, user.password);
+    
+    if (!isMatch) {
+      return res.status(401).json({ message: "Hibás email vagy jelszó!" });
+    }
+
+    // Token generálása
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET || 'titkos_kulcs',
+      { expiresIn: '1d' }
+    );
+
+    res.json({
+      message: "Sikeres bejelentkezés!",
+      token,
+      user: { 
+        id: user.id, 
+        full_name: user.full_name, 
+        email: user.email, 
+        role: user.role 
+      }
+    });
+
+  } catch (err) {
+    console.error("Login hiba:", err);
+    res.status(500).json({ error: "Szerver hiba a bejelentkezéskor." });
   }
 };

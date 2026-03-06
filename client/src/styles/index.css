@@ -53,6 +53,21 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+@keyframes toastIn {
+  from {
+    transform: translate(-50%, -40px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+.animate-toast {
+  animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
