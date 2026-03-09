@@ -29,18 +29,20 @@ const CarDetails = () => {
       const start = new Date(startDate);
       const end = new Date(endDate);
 
-      start.setHours(0, 0, 0, 0);
-      end.setHours(0, 0, 0, 0);
+      const diffMs = end - start;
+      const diffHours = diffMs / (1000 * 60 * 60);
 
-      const diffTime = end - start;
-      // Kiszámoljuk a különbséget és hozzáadunk 1-et
-      // Így: 03.08 - 03.08 = 0 + 1 = 1 nap
-      const calculatedDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      if (diffHours >= 1) {
+        // Ha 1 óra és 24 óra között van -> 1 nap
+        // Ha 24 óra és 1 perc -> 2 nap
+        const calculatedDays = Math.ceil(diffHours / 24);
 
-      const finalDays = calculatedDays > 0 ? calculatedDays : 0;
-
-      setDays(finalDays);
-      setTotalPrice(finalDays * car.price_per_day);
+        setDays(calculatedDays);
+        setTotalPrice(calculatedDays * car.price_per_day);
+      } else {
+        setDays(0);
+        setTotalPrice(0);
+      }
     }
   }, [startDate, endDate, car]);
   const handleBooking = async () => {
@@ -94,6 +96,8 @@ const CarDetails = () => {
       });
       setTimeout(() => navigate("/"), 1500);
     } catch (err) {
+      console.error("DEBUG - Teljes hiba objektum:", err);
+      console.log("DEBUG - Szerver válasza:", err.response?.data);
       setToast({
         message:
           err.response?.data?.message || "Hiba történt a foglalás során!",
@@ -153,10 +157,10 @@ const CarDetails = () => {
           </h3>
 
           <div className={styles.inputGroup}>
-            <label className={styles.label}>Bérlés kezdete</label>
+            <label className={styles.label}>Bérlés kezdete (időponttal)</label>
             <input
-              type="date"
-              min={today} // Nem lehet a múltban
+              type="datetime-local"
+              min={new Date().toISOString().slice(0, 16)} // Ma, mostantól
               className={styles.input}
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
@@ -164,10 +168,10 @@ const CarDetails = () => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label className={styles.label}>Bérlés vége</label>
+            <label className={styles.label}>Bérlés vége (időponttal)</label>
             <input
-              type="date"
-              min={startDate || today} // Nem lehet korábban, mint a kezdő dátum
+              type="datetime-local"
+              min={startDate || new Date().toISOString().slice(0, 16)}
               className={styles.input}
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}

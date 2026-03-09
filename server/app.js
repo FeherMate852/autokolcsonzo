@@ -1,11 +1,13 @@
-const express = require('express');
-const cors = require('cors');
-const carRoutes = require('./routes/carRoutes');
-const authRoutes = require('./routes/authRoutes');
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config();
+const express = require("express");
+const cors = require("cors");
+const carRoutes = require("./routes/carRoutes");
+const authRoutes = require("./routes/authRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const { createClient } = require("@supabase/supabase-js");
+require("dotenv").config();
 
-const supabaseUrl = process.env.SUPABASE_URL; 
+const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -13,19 +15,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/cars', carRoutes);
-app.use('/api/auth', authRoutes);
+app.use("/api/cars", carRoutes);
+app.use("/api/auth", authRoutes);
 
-app.get('/api/cars/:id', async (req, res) => {
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/admin", adminRoutes);
+
+app.get("/api/cars/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    
-    // Supabase lekérdezés (vagy amilyen adatbázist használsz)
+
     const { data, error } = await supabase
-      .from('cars')
-      .select('*')
-      .eq('id', id)
-      .single(); // Fontos: csak egy objektumot várunk, nem tömböt!
+      .from("cars")
+      .select("*")
+      .eq("id", id)
+      .single();
 
     if (error) throw error;
     if (!data) return res.status(404).json({ message: "Autó nem található" });

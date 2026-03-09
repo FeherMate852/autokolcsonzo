@@ -1,0 +1,54 @@
+.container {
+  padding: 1rem;
+}
+
+.title {
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.table th,
+.table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table th {
+  background: #f8fafc;
+  color: #475569;
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+.confirmed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.approveBtn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}

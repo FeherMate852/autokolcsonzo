@@ -9,6 +9,8 @@ import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CarDetails from "./components/CarDetails";
 import HomePage from "./components/HomePage";
+import Profile from "./components/Profile.jsx";
+import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
   const [cars, setCars] = useState([]);
@@ -93,6 +95,8 @@ function App() {
               }
             />
             <Route path="/car/:id" element={<CarDetails />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </div>
         <Footer />

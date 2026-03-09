@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Car, LogOut, User } from "lucide-react";
+import { Car, LogOut, User, Calendar, ShieldCheck } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/Navbar.module.css";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -34,27 +35,61 @@ const Navbar = () => {
 
         <div className={styles.actions}>
           {user ? (
-            <div className="flex items-center gap-6">
-              <div className={styles.userBox}>
-                <div className={styles.avatar}>
-                  <User size={18} />
+            <div className="flex items-center">
+              <div
+                className={styles.dropdownContainer}
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
+                <div className={styles.userBox}>
+                  <div className={styles.avatar}>
+                    <User size={18} />
+                  </div>
+                  <span className={styles.fullName}>{user.full_name}</span>
+                  <span className={styles.arrow}>
+                    {isDropdownOpen ? "▲" : "▼"}
+                  </span>
                 </div>
-                <span>{user.full_name}</span>
+
+                {isDropdownOpen && (
+                  <div className={styles.dropdownMenu}>
+                    <Link to="/profile" className={styles.dropdownItem}>
+                      <Calendar size={16} /> Saját foglalásaim
+                    </Link>
+
+                    {user.role === "admin" && (
+                      <>
+                        <div className={styles.divider}></div>
+                        <Link
+                          to="/admin"
+                          className={`${styles.dropdownItem} ${styles.adminLink}`}
+                        >
+                          <ShieldCheck size={16} /> Admin Felület
+                        </Link>
+                      </>
+                    )}
+
+                    <div className={styles.divider}></div>
+                    <button
+                      onClick={handleLogout}
+                      className={styles.dropdownItem}
+                    >
+                      <LogOut size={16} className={styles.logoutText} />{" "}
+                      <span className={styles.logoutText}>Kijelentkezés</span>
+                    </button>
+                  </div>
+                )}
               </div>
-              <button onClick={handleLogout} className={styles.logoutBtn}>
-                <LogOut size={18} />
-                <span className="hidden md:inline">Kijelentkezés</span>
-              </button>
             </div>
           ) : (
-            <>
+            <div className={styles.actions}>
               <Link to="/login" className={styles.navLink}>
                 Bejelentkezés
               </Link>
               <Link to="/register" className={styles.regBtn}>
                 Regisztráció
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>
