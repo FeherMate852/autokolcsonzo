@@ -23,26 +23,44 @@ const AdminCarManagement = () => {
 
   const handleSave = async (carData) => {
     const token = localStorage.getItem("token");
+
+    const sendData = new FormData();
+    sendData.append("brand", carData.brand);
+    sendData.append("model", carData.model);
+    sendData.append("price_per_day", carData.price_per_day);
+    sendData.append("year", carData.year);
+
+    if (carData.file) {
+      sendData.append("image", carData.file);
+    } else if (carData.image_url) {
+      sendData.append("image_url", carData.image_url);
+    }
+
     try {
       if (editingCar) {
-        // Szerkesztés (PUT)
         await axios.put(
           `http://localhost:5000/api/cars/${editingCar.id}`,
-          carData,
+          sendData,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
           },
         );
       } else {
-        await axios.post("http://localhost:5000/api/cars", carData, {
-          headers: { Authorization: `Bearer ${token}` },
+        await axios.post("http://localhost:5000/api/cars", sendData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         });
       }
-      fetchCars();
       setShowEditor(false);
       setEditingCar(null);
+      fetchCars();
     } catch (err) {
-      alert("Hiba a mentés során!");
+      console.error("Hiba mentéskor:", err);
     }
   };
 
@@ -74,6 +92,7 @@ const AdminCarManagement = () => {
           <tr>
             <th>Márka</th>
             <th>Modell</th>
+            <th>Évjárat</th>
             <th>Ár/nap</th>
             <th>Műveletek</th>
           </tr>
@@ -83,6 +102,7 @@ const AdminCarManagement = () => {
             <tr key={car.id}>
               <td>{car.brand}</td>
               <td>{car.model}</td>
+              <td>{car.year}</td>
               <td>{car.price_per_day} Ft</td>
               <td>
                 <button

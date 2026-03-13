@@ -17,6 +17,9 @@
   border-radius: 6px;
   cursor: pointer;
 }
+.addBtn:hover {
+  background: #2563eb;
+}
 
 .table {
   width: 100%;
@@ -28,6 +31,7 @@
 .table th {
   padding: 1rem;
   border-bottom: 1px solid #e2e8f0;
+  text-align: center;
 }
 
 .editBtn {
@@ -40,6 +44,10 @@
   cursor: pointer;
 }
 
+.editBtn:hover {
+  background: #d97706;
+}
+
 .deleteBtn {
   background: #ef4444;
   color: white;
@@ -47,4 +55,7 @@
   padding: 0.4rem 0.8rem;
   border-radius: 4px;
   cursor: pointer;
+}
+.deleteBtn:hover {
+  background: #dc2626;
 }

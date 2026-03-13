@@ -48,6 +48,28 @@ const BookingManagement = () => {
     }
   };
 
+  const handleDeleteBooking = async (id) => {
+    if (
+      !window.confirm(
+        "Biztosan elutasítod és véglegesen törlöd ezt a foglalást?",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:5000/api/admin/bookings/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setBookings(bookings.filter((b) => b.id !== id));
+    } catch (err) {
+      console.error("Hiba a törlésnél:", err);
+      setError("Nem sikerült törölni a foglalást!");
+    }
+  };
+
   if (loading) return <div className={styles.center}>Betöltés...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
 
@@ -82,12 +104,20 @@ const BookingManagement = () => {
               </td>
               <td>
                 {b.status === "pending" && (
-                  <button
-                    className={styles.approveBtn}
-                    onClick={() => handleStatusChange(b.id, "confirmed")}
-                  >
-                    Jóváhagyás
-                  </button>
+                  <div className={styles.actionButtons}>
+                    <button
+                      className={styles.approveBtn}
+                      onClick={() => handleStatusChange(b.id, "confirmed")}
+                    >
+                      Jóváhagyás
+                    </button>
+                    <button
+                      className={styles.rejectBtn}
+                      onClick={() => handleDeleteBooking(b.id)}
+                    >
+                      Elutasítás
+                    </button>
+                  </div>
                 )}
               </td>
             </tr>

@@ -32,3 +32,23 @@ exports.updateBookingStatus = async (req, res) => {
     res.status(500).json({ message: "Nem sikerült frissíteni a státuszt." });
   }
 };
+
+exports.deleteBooking = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await db.query(
+      "DELETE FROM bookings WHERE id = $1 RETURNING *",
+      [id],
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "A foglalás nem található." });
+    }
+
+    res.status(200).json({ message: "Foglalás elutasítva és törölve." });
+  } catch (error) {
+    console.error("Hiba a foglalás törlésekor:", error);
+    res.status(500).json({ message: "Nem sikerült törölni a foglalást." });
+  }
+};

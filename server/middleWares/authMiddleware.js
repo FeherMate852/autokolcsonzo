@@ -10,7 +10,6 @@ exports.verifyToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      console.log("JWT Hiba:", err.message);
       return res
         .status(401)
         .json({ message: "Érvénytelen token: " + err.message });

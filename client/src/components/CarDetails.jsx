@@ -94,15 +94,11 @@ const CarDetails = () => {
         message: "Sikeres foglalás! Átirányítás...",
         type: "success",
       });
-      setTimeout(() => navigate("/"), 1500);
+      setTimeout(() => navigate("/profile"), 1500);
     } catch (err) {
-      console.error("DEBUG - Teljes hiba objektum:", err);
-      console.log("DEBUG - Szerver válasza:", err.response?.data);
-      setToast({
-        message:
-          err.response?.data?.message || "Hiba történt a foglalás során!",
-        type: "error",
-      });
+      const errorMessage =
+        err.response?.data?.message || "Hiba történt a foglalás során!";
+      setToast({ message: errorMessage, type: "error" });
     } finally {
       setLoading(false);
     }
