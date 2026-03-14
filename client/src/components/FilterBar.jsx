@@ -18,7 +18,7 @@ const FilterBar = ({
   };
 
   return (
-    <div className={styles.container}>
+    <div id="cars-section" className={styles.container}>
       <div className={styles.searchWrapper}>
         <Search className={styles.searchIcon} size={20} />
         <input

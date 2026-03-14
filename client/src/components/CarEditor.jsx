@@ -4,7 +4,14 @@ import styles from "../styles/CarEditor.module.css";
 
 const CarEditor = ({ onClose, onSave, car }) => {
   const [formData, setFormData] = useState(
-    car || { brand: "", model: "", price_per_day: "", year: "" },
+    car || {
+      brand: "",
+      model: "",
+      price_per_day: "",
+      year: "",
+      fuel_type: "Benzin",
+      transmission: "Manuális",
+    },
   );
   const [file, setFile] = useState(null);
 
@@ -29,6 +36,28 @@ const CarEditor = ({ onClose, onSave, car }) => {
           value={formData.year || ""}
           onChange={(e) => setFormData({ ...formData, year: e.target.value })}
         />
+        <select
+          value={formData.fuel_type || "Benzin"}
+          onChange={(e) =>
+            setFormData({ ...formData, fuel_type: e.target.value })
+          }
+        >
+          <option value="Benzin">Benzin</option>
+          <option value="Dízel">Dízel</option>
+          <option value="Elektromos">Elektromos</option>
+          <option value="Hibrid">Hibrid</option>
+        </select>
+
+        <select
+          value={formData.transmission || "Manuális"}
+          onChange={(e) =>
+            setFormData({ ...formData, transmission: e.target.value })
+          }
+        >
+          <option value="Manuális">Manuális</option>
+          <option value="Automata">Automata</option>
+        </select>
+
         <input
           type="number"
           placeholder="Napi ár"

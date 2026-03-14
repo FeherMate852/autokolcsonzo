@@ -100,3 +100,17 @@
   color: white;
   border-color: #1d4ed8;
 }
+.specsContainer {
+  display: flex;
+  gap: 1rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.specItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}

@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Calendar, ChevronLeft, CreditCard, Info } from "lucide-react";
+import {
+  Calendar,
+  ChevronLeft,
+  CreditCard,
+  Info,
+  Star,
+  Fuel,
+  Settings2,
+} from "lucide-react";
 import Toast from "./Toast";
 import styles from "../styles/CarDetails.module.css";
 
@@ -15,6 +23,10 @@ const CarDetails = () => {
   const [days, setDays] = useState(0);
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 3;
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -22,6 +34,11 @@ const CarDetails = () => {
     axios
       .get(`http://localhost:5000/api/cars/${id}`)
       .then((res) => setCar(res.data));
+
+    axios
+      .get(`http://localhost:5000/api/reviews/car/${id}`)
+      .then((res) => setReviews(res.data))
+      .catch((err) => console.error("Hiba a vélemények lekérésekor:", err));
   }, [id]);
 
   useEffect(() => {
@@ -104,6 +121,55 @@ const CarDetails = () => {
     }
   };
 
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return setToast({
+        message: "Értékeléshez be kell jelentkezned!",
+        type: "error",
+      });
+    }
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/reviews",
+        { car_id: id, rating: reviewForm.rating, comment: reviewForm.comment },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      setToast({ message: res.data.message, type: "success" });
+      setReviewForm({ rating: 5, comment: "" });
+
+      // Frissítjük a vélemények listáját, hogy az új azonnal megjelenjen
+      const reviewsRes = await axios.get(
+        `http://localhost:5000/api/reviews/car/${id}`,
+      );
+      setReviews(reviewsRes.data);
+    } catch (err) {
+      setToast({
+        message: err.response?.data?.message || "Hiba az értékelés küldésekor!",
+        type: "error",
+      });
+    }
+  };
+
+  //Átlagszámítás (ha van értékelés)
+  const averageRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length
+        ).toFixed(1)
+      : 0;
+
+  //Kivágjuk a megfelelő 5 elemet a tömbből (lapozáshoz)
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
+
+  const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+
   if (!car) return <div className={styles.container}>Betöltés...</div>;
 
   return (
@@ -137,7 +203,10 @@ const CarDetails = () => {
                 {car.year}
               </span>
               <span className={`${styles.badge} ${styles.catBadge}`}>
-                {car.category}
+                <Fuel size={18} /> {car.fuel_type}
+              </span>
+              <span className={`${styles.badge} ${styles.catBadge}`}>
+                <Settings2 size={18} /> {car.transmission}
               </span>
             </div>
             <p className={styles.description}>
@@ -208,6 +277,118 @@ const CarDetails = () => {
             <Info size={12} className="inline mr-1" /> A foglalás gomb
             megnyomásával elfogadja a bérleti feltételeket.
           </p>
+        </div>
+      </div>
+
+      <div className={styles.reviewsSection}>
+        <div className={styles.reviewsHeader}>
+          <h2 className={styles.reviewsTitle}>Korábbi bérlők véleményei</h2>
+          {reviews.length > 0 && (
+            <div className={styles.averageBadge}>
+              <Star fill="#f59e0b" color="#f59e0b" size={24} />
+              <span>{averageRating} / 5.0</span>
+              <span className={styles.reviewCount}>
+                ({reviews.length} értékelés)
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.reviewsGrid}>
+          <div className={styles.reviewsList}>
+            {reviews.length === 0 ? (
+              <p className={styles.noReviews}>
+                Még nincsenek értékelések. Legyél te az első!
+              </p>
+            ) : (
+              currentReviews.map((rev) => (
+                <div key={rev.id} className={styles.reviewCard}>
+                  <div className={styles.reviewHeader}>
+                    <strong>{rev.user_name}</strong>
+                    <div className={styles.stars}>
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={16}
+                          fill={i < rev.rating ? "#f59e0b" : "none"}
+                          color={i < rev.rating ? "#f59e0b" : "#cbd5e1"}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className={styles.reviewDate}>
+                    {new Date(rev.created_at).toLocaleDateString("hu-HU")}
+                  </p>
+                  {rev.comment && (
+                    <p className={styles.reviewComment}>{rev.comment}</p>
+                  )}
+                </div>
+              ))
+            )}
+
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className={styles.pageBtn}
+                >
+                  Előző
+                </button>
+                <span className={styles.pageInfo}>
+                  {currentPage} / {totalPages}. oldal
+                </span>
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className={styles.pageBtn}
+                >
+                  Következő
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.reviewFormContainer}>
+            <h3>Értékeld az autót!</h3>
+            <form onSubmit={handleReviewSubmit}>
+              <div className={styles.ratingInput}>
+                <label>Értékelés (1-5 csillag):</label>
+                <select
+                  value={reviewForm.rating}
+                  onChange={(e) =>
+                    setReviewForm({
+                      ...reviewForm,
+                      rating: Number(e.target.value),
+                    })
+                  }
+                  className={styles.input}
+                >
+                  <option value={5}>⭐⭐⭐⭐⭐ (5/5)</option>
+                  <option value={4}>⭐⭐⭐⭐ (4/5)</option>
+                  <option value={3}>⭐⭐⭐ (3/5)</option>
+                  <option value={2}>⭐⭐ (2/5)</option>
+                  <option value={1}>⭐ (1/5)</option>
+                </select>
+              </div>
+              <textarea
+                placeholder="Írd le a tapasztalataidat (opcionális)..."
+                value={reviewForm.comment}
+                onChange={(e) =>
+                  setReviewForm({ ...reviewForm, comment: e.target.value })
+                }
+                className={styles.textarea}
+                rows="4"
+              ></textarea>
+              <button type="submit" className={styles.submitReviewBtn}>
+                Értékelés elküldése
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

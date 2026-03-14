@@ -1,6 +1,6 @@
 import styles from "../styles/CarCard.module.css";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Fuel, Settings2 } from "lucide-react";
 
 const CarCard = ({ car }) => {
   return (
@@ -24,6 +24,14 @@ const CarCard = ({ car }) => {
             </span>
             <p className={styles.priceUnit}>/ nap</p>
           </div>
+        </div>
+        <div className={styles.specsContainer}>
+          <span className={styles.specItem}>
+            <Fuel size={16} /> {car.fuel_type}
+          </span>
+          <span className={styles.specItem}>
+            <Settings2 size={16} /> {car.transmission}
+          </span>
         </div>
 
         <Link to={`/car/${car.id}`} className={styles.detailsLink}>

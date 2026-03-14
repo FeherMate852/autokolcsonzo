@@ -62,3 +62,15 @@
 .saveBtn:hover {
   background: #2563eb;
 }
+
+.modal select {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal select:focus {
+  border-color: black;
+  outline: none;
+}

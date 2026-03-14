@@ -1,6 +1,5 @@
 const db = require("../config/db");
 
-// 1. Új foglalás létrehozása (Ütközés-ellenőrzéssel)
 exports.createBooking = async (req, res) => {
   const { car_id, user_id, start_date, end_date, total_price } = req.body;
 
@@ -48,7 +47,6 @@ exports.createBooking = async (req, res) => {
   }
 };
 
-// 2. Felhasználó saját foglalásainak lekérése
 exports.getUserBookings = async (req, res) => {
   const { userId } = req.params;
   try {

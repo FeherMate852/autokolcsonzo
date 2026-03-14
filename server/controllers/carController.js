@@ -13,7 +13,8 @@ exports.getAllCars = async (req, res) => {
 
 exports.updateCar = async (req, res) => {
   const { id } = req.params;
-  const { brand, model, price_per_day, year } = req.body;
+  const { brand, model, price_per_day, year, fuel_type, transmission } =
+    req.body;
 
   try {
     // 1. Lekérjük az autó régi adatait, hogy tudjuk, mi volt a régi kép URL-je
@@ -55,9 +56,17 @@ exports.updateCar = async (req, res) => {
 
     // 3. Frissítjük az adatbázist az új (vagy megtartott) kép URL-lel
     const query =
-      "UPDATE cars SET brand = $1, model = $2, price_per_day = $3, image_url = $4, year = $5 WHERE id = $6";
-    await db.query(query, [brand, model, price_per_day, newImageUrl, year, id]);
-
+      "UPDATE cars SET brand = $1, model = $2, price_per_day = $3, image_url = $4, year = $5, fuel_type = $6, transmission = $7 WHERE id = $8";
+    await db.query(query, [
+      brand,
+      model,
+      price_per_day,
+      newImageUrl,
+      year,
+      fuel_type,
+      transmission,
+      id,
+    ]);
     res.status(200).json({ message: "Autó sikeresen frissítve!" });
   } catch (err) {
     console.error("Hiba az update során:", err);
@@ -68,7 +77,8 @@ exports.updateCar = async (req, res) => {
 };
 
 exports.addCar = async (req, res) => {
-  const { brand, model, price_per_day, year } = req.body;
+  const { brand, model, price_per_day, year, fuel_type, transmission } =
+    req.body;
 
   const image_url = req.file
     ? `http://localhost:5000/uploads/${req.file.filename}`
@@ -76,13 +86,15 @@ exports.addCar = async (req, res) => {
 
   try {
     const query =
-      "INSERT INTO cars (brand, model, image_url, price_per_day, year) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+      "INSERT INTO cars (brand, model, image_url, price_per_day, year, fuel_type, transmission) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
     const result = await db.query(query, [
       brand,
       model,
       image_url,
       price_per_day,
       year,
+      fuel_type,
+      transmission,
     ]);
     res
       .status(201)

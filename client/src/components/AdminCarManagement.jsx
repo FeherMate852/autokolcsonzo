@@ -29,6 +29,8 @@ const AdminCarManagement = () => {
     sendData.append("model", carData.model);
     sendData.append("price_per_day", carData.price_per_day);
     sendData.append("year", carData.year);
+    sendData.append("fuel_type", carData.fuel_type);
+    sendData.append("transmission", carData.transmission);
 
     if (carData.file) {
       sendData.append("image", carData.file);
