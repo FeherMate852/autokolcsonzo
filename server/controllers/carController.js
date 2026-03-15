@@ -1,6 +1,19 @@
 const db = require("../config/db");
-const fs = require("fs");
-const path = require("path");
+const { createClient } = require("@supabase/supabase-js");
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+//Segédfügvén a fájl nevének kinyeréséhez a Supabase URL-ből, hogy törölni tudjuk a régi képet
+const extractFileNameFromUrl = (url) => {
+  if (!url) return null;
+  const parts = url.split("/public/cars/");
+  if (parts.length > 1) {
+    return parts[1];
+  }
+  return null;
+};
 
 exports.getAllCars = async (req, res) => {
   try {
@@ -18,7 +31,6 @@ exports.updateCar = async (req, res) => {
     req.body;
 
   try {
-    // 1. Lekérjük az autó régi adatait, hogy tudjuk, mi volt a régi kép URL-je
     const oldCarResult = await db.query(
       "SELECT image_url FROM cars WHERE id = $1",
       [id],
@@ -30,32 +42,32 @@ exports.updateCar = async (req, res) => {
     const oldImageUrl = oldCarResult.rows[0].image_url;
     let newImageUrl = req.body.image_url;
 
-    // 2. Ha töltöttek fel új fájlt, beállítjuk az új URL-t, és TÖRÖLJÜK a régit
     if (req.file) {
-      newImageUrl = `https://autokolcsonzo.onrender.com/uploads/${req.file.filename}`;
+      const fileName = `${Date.now()}-${req.file.originalname.replace(/\s/g, "_")}`;
 
-      if (oldImageUrl && oldImageUrl.includes("/uploads/")) {
-        const oldFileName = oldImageUrl.split("/uploads/")[1];
-        const oldFilePath = path.join(__dirname, "../uploads", oldFileName);
-
-        // Töröljük a fájlt (aszinkron módon, hogy ne akassza meg a kérést)
-        fs.unlink(oldFilePath, (err) => {
-          if (err) {
-            console.error(
-              "Nem sikerült törölni a régi képet (talán már nem is létezett):",
-              err,
-            );
-          } else {
-            console.log(
-              "Régi kép sikeresen törölve a szerverről:",
-              oldFileName,
-            );
-          }
+      //Feltöltés a Supabase felhőbe (a RAM-ból: req.file.buffer)
+      const { data, error } = await supabase.storage
+        .from("cars")
+        .upload(fileName, req.file.buffer, {
+          contentType: req.file.mimetype,
         });
+
+      if (error) throw error;
+
+      //Végleges link kinyerése
+      const { data: publicUrlData } = supabase.storage
+        .from("cars")
+        .getPublicUrl(fileName);
+
+      newImageUrl = publicUrlData.publicUrl;
+
+      const oldFileName = extractFileNameFromUrl(oldImageUrl);
+      if (oldFileName) {
+        await supabase.storage.from("cars").remove([oldFileName]);
+        console.log("Régi kép sikeresen törölve a Supabase-ről:", oldFileName);
       }
     }
 
-    // 3. Frissítjük az adatbázist az új (vagy megtartott) kép URL-lel
     const query =
       "UPDATE cars SET brand = $1, model = $2, price_per_day = $3, image_url = $4, year = $5, fuel_type = $6, transmission = $7 WHERE id = $8";
     await db.query(query, [
@@ -68,6 +80,7 @@ exports.updateCar = async (req, res) => {
       transmission,
       id,
     ]);
+
     res.status(200).json({ message: "Autó sikeresen frissítve!" });
   } catch (err) {
     console.error("Hiba az update során:", err);
@@ -80,12 +93,29 @@ exports.updateCar = async (req, res) => {
 exports.addCar = async (req, res) => {
   const { brand, model, price_per_day, year, fuel_type, transmission } =
     req.body;
-
-  const image_url = req.file
-    ? `https://autokolcsonzo.onrender.com/uploads/${req.file.filename}`
-    : req.body.image_url;
+  let image_url = req.body.image_url;
 
   try {
+    if (req.file) {
+      const fileName = `${Date.now()}-${req.file.originalname.replace(/\s/g, "_")}`;
+
+      //Kép feltöltése a Storage-ba
+      const { data, error } = await supabase.storage
+        .from("cars")
+        .upload(fileName, req.file.buffer, {
+          contentType: req.file.mimetype,
+        });
+
+      if (error) throw error;
+
+      //Végleges link kinyerése
+      const { data: publicUrlData } = supabase.storage
+        .from("cars")
+        .getPublicUrl(fileName);
+
+      image_url = publicUrlData.publicUrl;
+    }
+
     const query =
       "INSERT INTO cars (brand, model, image_url, price_per_day, year, fuel_type, transmission) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
     const result = await db.query(query, [
@@ -97,6 +127,7 @@ exports.addCar = async (req, res) => {
       fuel_type,
       transmission,
     ]);
+
     res
       .status(201)
       .json({ message: "Autó sikeresen hozzáadva!", car: result.rows[0] });
@@ -113,6 +144,7 @@ exports.deleteCar = async (req, res) => {
       "SELECT image_url FROM cars WHERE id = $1",
       [id],
     );
+
     const deleteResult = await db.query(
       "DELETE FROM cars WHERE id = $1 RETURNING *",
       [id],
@@ -123,12 +155,12 @@ exports.deleteCar = async (req, res) => {
     }
 
     const imageUrl = carResult.rows[0].image_url;
-    if (imageUrl && imageUrl.includes("/uploads/")) {
-      const fileName = imageUrl.split("/uploads/")[1];
-      const filePath = path.join(__dirname, "../uploads", fileName);
-      fs.unlink(filePath, (err) => {
-        if (!err) console.log("Törölt autó képe eltávolítva:", fileName);
-      });
+    const fileName = extractFileNameFromUrl(imageUrl);
+
+    if (fileName) {
+      const { error } = await supabase.storage.from("cars").remove([fileName]);
+      if (!error)
+        console.log("Törölt autó képe eltávolítva a Supabase-ről:", fileName);
     }
 
     res.json({ message: "Autó sikeresen törölve" });
