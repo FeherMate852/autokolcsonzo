@@ -1,9 +1,28 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import BookingManagement from "./BookingManagement";
 import AdminCarManagement from "./AdminCarManagement";
 import styles from "../styles/AdminDashboard.module.css";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+
+    if (!userStr) {
+      navigate("/login");
+      return;
+    }
+
+    const user = JSON.parse(userStr);
+
+    if (user.role !== "admin") {
+      navigate("/");
+    }
+  }, [navigate]);
+
   const [activeTab, setActiveTab] = useState("bookings");
 
   return (
