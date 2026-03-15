@@ -7,6 +7,7 @@ exports.getAllCars = async (req, res) => {
     const result = await db.query("SELECT * FROM cars ORDER BY brand ASC");
     res.json(result.rows);
   } catch (err) {
+    console.error("Pontos hiba:", err);
     res.status(500).json({ error: "Hiba az autók lekérésekor" });
   }
 };
