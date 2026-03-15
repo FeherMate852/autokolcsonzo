@@ -1,4 +1,4 @@
-import { Search, ArrowUpDown, Calendar, Tag } from "lucide-react";
+import { Search, Calendar, Tag, Fuel, Settings2 } from "lucide-react";
 import styles from "../styles/FilterBar.module.css";
 
 const FilterBar = ({
@@ -6,6 +6,10 @@ const FilterBar = ({
   setSearchTerm,
   sortConfig,
   setSortConfig,
+  fuelFilter,
+  setFuelFilter,
+  transmissionFilter,
+  setTransmissionFilter,
 }) => {
   const toggleSort = (key) => {
     setSortConfig((prev) => {
@@ -16,6 +20,12 @@ const FilterBar = ({
       return { ...prev, [key]: nextDirection };
     });
   };
+  const hasActiveFilters =
+    searchTerm ||
+    sortConfig.price_per_day ||
+    sortConfig.year ||
+    fuelFilter ||
+    transmissionFilter;
 
   return (
     <div id="cars-section" className={styles.container}>
@@ -28,6 +38,36 @@ const FilterBar = ({
           onChange={(e) => setSearchTerm(e.target.value)}
           className={styles.input}
         />
+      </div>
+
+      <div className={styles.dropdownFilters}>
+        <div className={styles.selectWrapper}>
+          <Fuel className={styles.selectIcon} size={16} />
+          <select
+            value={fuelFilter}
+            onChange={(e) => setFuelFilter(e.target.value)}
+            className={styles.select}
+          >
+            <option value="">Összes üzemanyag</option>
+            <option value="Benzin">Benzin</option>
+            <option value="Dízel">Dízel</option>
+            <option value="Elektromos">Elektromos</option>
+            <option value="Hibrid">Hibrid</option>
+          </select>
+        </div>
+
+        <div className={styles.selectWrapper}>
+          <Settings2 className={styles.selectIcon} size={16} />
+          <select
+            value={transmissionFilter}
+            onChange={(e) => setTransmissionFilter(e.target.value)}
+            className={styles.select}
+          >
+            <option value="">Összes váltó</option>
+            <option value="Manuális">Manuális</option>
+            <option value="Automata">Automata</option>
+          </select>
+        </div>
       </div>
 
       <div className={styles.sortContainer}>
@@ -59,15 +99,17 @@ const FilterBar = ({
               : ""}
         </button>
 
-        {(searchTerm || sortConfig.price_per_day || sortConfig.year) && (
+        {hasActiveFilters && (
           <button
             onClick={() => {
               setSearchTerm("");
               setSortConfig({ price_per_day: "", year: "" });
+              setFuelFilter("");
+              setTransmissionFilter("");
             }}
             className={styles.resetBtn}
           >
-            Szűrők törlése
+            Törlés
           </button>
         )}
       </div>

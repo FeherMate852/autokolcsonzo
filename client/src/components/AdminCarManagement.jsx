@@ -95,6 +95,8 @@ const AdminCarManagement = () => {
             <th>Márka</th>
             <th>Modell</th>
             <th>Évjárat</th>
+            <th>Üzemanyag</th>
+            <th>Váltó</th>
             <th>Ár/nap</th>
             <th>Műveletek</th>
           </tr>
@@ -105,6 +107,8 @@ const AdminCarManagement = () => {
               <td>{car.brand}</td>
               <td>{car.model}</td>
               <td>{car.year}</td>
+              <td>{car.fuel_type}</td>
+              <td>{car.transmission}</td>
               <td>{car.price_per_day} Ft</td>
               <td>
                 <button

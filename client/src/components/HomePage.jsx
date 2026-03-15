@@ -10,6 +10,10 @@ const HomePage = ({
   setSearchTerm,
   sortConfig,
   setSortConfig,
+  fuelFilter,
+  setFuelFilter,
+  transmissionFilter,
+  setTransmissionFilter,
 }) => (
   <>
     <Hero />
@@ -19,6 +23,10 @@ const HomePage = ({
         setSearchTerm={setSearchTerm}
         sortConfig={sortConfig}
         setSortConfig={setSortConfig}
+        fuelFilter={fuelFilter}
+        setFuelFilter={setFuelFilter}
+        transmissionFilter={transmissionFilter}
+        setTransmissionFilter={setTransmissionFilter}
       />
 
       <div className={styles.headerSection}>

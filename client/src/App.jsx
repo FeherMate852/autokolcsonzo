@@ -15,8 +15,12 @@ import AdminDashboard from "./components/AdminDashboard";
 function App() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Szűrők állapotai
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ price_per_day: "", year: "" });
+  const [fuelFilter, setFuelFilter] = useState("");
+  const [transmissionFilter, setTransmissionFilter] = useState("");
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -34,6 +38,8 @@ function App() {
 
   const filteredAndSortedCars = useMemo(() => {
     let result = [...cars];
+
+    //Keresés névre (Márka + Modell)
     if (searchTerm) {
       const cleanSearch = searchTerm.trim().toLowerCase();
       result = result.filter((car) =>
@@ -41,6 +47,17 @@ function App() {
       );
     }
 
+    //Szűrés Üzemanyagra
+    if (fuelFilter) {
+      result = result.filter((car) => car.fuel_type === fuelFilter);
+    }
+
+    //Szűrés Váltóra
+    if (transmissionFilter) {
+      result = result.filter((car) => car.transmission === transmissionFilter);
+    }
+
+    //Rendezés
     result.sort((a, b) => {
       if (sortConfig.price_per_day) {
         const valA = Number(a.price_per_day);
@@ -56,8 +73,9 @@ function App() {
       }
       return 0;
     });
+
     return result;
-  }, [cars, searchTerm, sortConfig]);
+  }, [cars, searchTerm, sortConfig, fuelFilter, transmissionFilter]);
 
   return (
     <Router>
@@ -75,6 +93,10 @@ function App() {
                   setSearchTerm={setSearchTerm}
                   sortConfig={sortConfig}
                   setSortConfig={setSortConfig}
+                  fuelFilter={fuelFilter}
+                  setFuelFilter={setFuelFilter}
+                  transmissionFilter={transmissionFilter}
+                  setTransmissionFilter={setTransmissionFilter}
                 />
               }
             />
