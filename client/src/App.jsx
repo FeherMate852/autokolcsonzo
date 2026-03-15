@@ -25,7 +25,9 @@ function App() {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/cars");
+        const response = await axios.get(
+          "https://autokolcsonzo.onrender.com/api/cars",
+        );
         setCars(response.data);
         setLoading(false);
       } catch (error) {

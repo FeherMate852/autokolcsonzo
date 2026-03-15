@@ -14,7 +14,9 @@ const AdminCarManagement = () => {
 
   const fetchCars = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/cars");
+      const res = await axios.get(
+        "https://autokolcsonzo.onrender.com/api/cars",
+      );
       setCars(res.data);
     } catch (err) {
       console.error("Hiba az autók lekérésekor:", err);
@@ -41,7 +43,7 @@ const AdminCarManagement = () => {
     try {
       if (editingCar) {
         await axios.put(
-          `http://localhost:5000/api/cars/${editingCar.id}`,
+          `https://autokolcsonzo.onrender.com/api/cars/${editingCar.id}`,
           sendData,
           {
             headers: {
@@ -51,12 +53,16 @@ const AdminCarManagement = () => {
           },
         );
       } else {
-        await axios.post("http://localhost:5000/api/cars", sendData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+        await axios.post(
+          "https://autokolcsonzo.onrender.com/api/cars",
+          sendData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
           },
-        });
+        );
       }
       setShowEditor(false);
       setEditingCar(null);
@@ -71,7 +77,7 @@ const AdminCarManagement = () => {
 
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://localhost:5000/api/cars/${id}`, {
+      await axios.delete(`https://autokolcsonzo.onrender.com/api/cars/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchCars();

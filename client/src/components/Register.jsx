@@ -54,7 +54,10 @@ const Register = () => {
     setLoading(true);
     try {
       const { confirmPassword, ...submitData } = formData;
-      await axios.post("http://localhost:5000/api/auth/register", submitData);
+      await axios.post(
+        "https://autokolcsonzo.onrender.com/api/auth/register",
+        submitData,
+      );
 
       setToast({
         message: "Sikeres regisztráció! Átirányítás...",

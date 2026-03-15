@@ -20,9 +20,12 @@ const BookingManagement = () => {
         return;
       }
 
-      const res = await axios.get("http://localhost:5000/api/admin/bookings", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://autokolcsonzo.onrender.com/api/admin/bookings",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setBookings(res.data);
     } catch (err) {
       setError(
@@ -38,7 +41,7 @@ const BookingManagement = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/admin/bookings/${id}/status`,
+        `https://autokolcsonzo.onrender.com/api/admin/bookings/${id}/status`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -59,9 +62,12 @@ const BookingManagement = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/admin/bookings/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://autokolcsonzo.onrender.com/api/admin/bookings/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       setBookings(bookings.filter((b) => b.id !== id));
     } catch (err) {

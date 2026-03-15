@@ -12,7 +12,7 @@ const Profile = () => {
     const fetchBookings = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/bookings/user/${user.id}`,
+          `https://autokolcsonzo.onrender.com/api/bookings/user/${user.id}`,
         );
         setBookings(res.data);
       } catch (err) {

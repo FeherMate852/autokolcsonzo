@@ -31,7 +31,7 @@ exports.updateCar = async (req, res) => {
 
     // 2. Ha töltöttek fel új fájlt, beállítjuk az új URL-t, és TÖRÖLJÜK a régit
     if (req.file) {
-      newImageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      newImageUrl = `https://autokolcsonzo.onrender.com/uploads/${req.file.filename}`;
 
       if (oldImageUrl && oldImageUrl.includes("/uploads/")) {
         const oldFileName = oldImageUrl.split("/uploads/")[1];
@@ -81,7 +81,7 @@ exports.addCar = async (req, res) => {
     req.body;
 
   const image_url = req.file
-    ? `http://localhost:5000/uploads/${req.file.filename}`
+    ? `https://autokolcsonzo.onrender.com/uploads/${req.file.filename}`
     : req.body.image_url;
 
   try {
