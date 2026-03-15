@@ -31,12 +31,10 @@ const CarDetails = () => {
   const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    axios
-      .get(`https://autokolcsonzo.onrender.com/api/cars/${id}`)
-      .then((res) => setCar(res.data));
+    axios.get(`/api/cars/${id}`).then((res) => setCar(res.data));
 
     axios
-      .get(`https://autokolcsonzo.onrender.com/api/reviews/car/${id}`)
+      .get(`/api/reviews/car/${id}`)
       .then((res) => setReviews(res.data))
       .catch((err) => console.error("Hiba a vélemények lekérésekor:", err));
   }, [id]);
@@ -96,7 +94,7 @@ const CarDetails = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "https://autokolcsonzo.onrender.com/api/bookings",
+        "/api/bookings",
         {
           car_id: id,
           user_id: user.id,
@@ -134,7 +132,7 @@ const CarDetails = () => {
 
     try {
       const res = await axios.post(
-        "https://autokolcsonzo.onrender.com/api/reviews",
+        "/api/reviews",
         { car_id: id, rating: reviewForm.rating, comment: reviewForm.comment },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -143,9 +141,7 @@ const CarDetails = () => {
       setReviewForm({ rating: 5, comment: "" });
 
       // Frissítjük a vélemények listáját, hogy az új azonnal megjelenjen
-      const reviewsRes = await axios.get(
-        `https://autokolcsonzo.onrender.com/api/reviews/car/${id}`,
-      );
+      const reviewsRes = await axios.get(`/api/reviews/car/${id}`);
       setReviews(reviewsRes.data);
     } catch (err) {
       setToast({

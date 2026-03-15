@@ -20,5 +20,11 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/reviews", reviewRoutes);
 
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Szerver fut a ${PORT} porton...`));

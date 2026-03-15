@@ -20,10 +20,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post(
-        "https://autokolcsonzo.onrender.com/api/auth/login",
-        formData,
-      );
+      const res = await axios.post("/api/auth/login", formData);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       setToast({ message: "Sikeres bejelentkezés!", type: "success" });

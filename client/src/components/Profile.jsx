@@ -11,9 +11,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await axios.get(
-          `https://autokolcsonzo.onrender.com/api/bookings/user/${user.id}`,
-        );
+        const res = await axios.get(`/api/bookings/user/${user.id}`);
         setBookings(res.data);
       } catch (err) {
         console.error("Hiba a foglalások lekérésekor:", err);
