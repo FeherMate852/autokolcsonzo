@@ -343,3 +343,44 @@
   color: #64748b;
   font-weight: 600;
 }
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .badges {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .infoSection,
+  .bookingCard,
+  .reviewFormContainer {
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+  }
+
+  .carImage {
+    height: 250px;
+    border-radius: 1.5rem;
+  }
+
+  .totalText {
+    font-size: 1.1rem;
+  }
+  .totalPrice {
+    font-size: 1.5rem;
+  }
+
+  .averageBadge {
+    width: 100%;
+    justify-content: center;
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+
+  .reviewsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

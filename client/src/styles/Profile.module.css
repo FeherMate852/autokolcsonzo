@@ -103,3 +103,26 @@
   height: 50vh;
   font-weight: 600;
 }
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .details {
+    padding: 1rem;
+  }
+
+  .infoRow {
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+  }
+  .carImageContainer {
+    height: 160px;
+  }
+}

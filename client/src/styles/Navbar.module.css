@@ -198,9 +198,53 @@
   color: #b91c1c;
 }
 
-/* Kisebb képernyőkön elrejtjük a nevet ha szükséges */
 @media (max-width: 640px) {
   .fullName {
     display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.5rem;
+    gap: 10px;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .navLink,
+  .regBtn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navLink,
+  .regBtn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  .logo {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .navbar {
+    gap: 4px;
+    padding: 0.25rem;
+  }
+
+  .logoText {
+    font-size: 0.9rem;
+  }
+
+  .navLink,
+  .regBtn {
+    padding: 0.15rem 0.25rem;
+    font-size: 0.6rem;
   }
 }
