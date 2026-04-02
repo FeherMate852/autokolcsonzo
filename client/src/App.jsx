@@ -11,6 +11,8 @@ import CarDetails from "./components/CarDetails";
 import HomePage from "./components/HomePage";
 import Profile from "./components/Profile.jsx";
 import AdminDashboard from "./components/AdminDashboard";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
   const [cars, setCars] = useState([]);
@@ -119,6 +121,8 @@ function App() {
             <Route path="/car/:id" element={<CarDetails />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
           </Routes>
         </div>
         <Footer />

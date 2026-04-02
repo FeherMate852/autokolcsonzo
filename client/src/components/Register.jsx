@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+// Beimportáljuk az ikonokat
+import { Eye, EyeOff } from "lucide-react";
 import Toast from "./Toast";
 import styles from "../styles/Register.module.css";
 
@@ -14,6 +16,10 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
+
+  // ÚJ: Állapotok a jelszavak láthatóságához
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Segédfüggvény a validációhoz
   const isPasswordStrong = (password) => {
@@ -114,32 +120,60 @@ const Register = () => {
           <div className={styles.passwordGrid}>
             <div className={styles.inputGroup}>
               <label className={styles.label}>Jelszó</label>
-              <input
-                className={styles.input}
-                type="password"
-                placeholder="••••••••"
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-              />
+              <div className={styles.inputWrapper}>
+                <input
+                  className={styles.input}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
+                <button
+                  type="button"
+                  className={styles.eyeButton}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
+
             <div className={styles.inputGroup}>
               <label className={styles.label}>Megerősítés</label>
-              <input
-                className={styles.input}
-                type="password"
-                placeholder="••••••••"
-                onChange={(e) =>
-                  setFormData({ ...formData, confirmPassword: e.target.value })
-                }
-              />
+              <div className={styles.inputWrapper}>
+                <input
+                  className={styles.input}
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
+                />
+                <button
+                  type="button"
+                  className={styles.eyeButton}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
           <button
             disabled={loading}
             type="submit"
-            className={`${styles.button} ${loading ? styles.buttonDisabled : ""}`}
+            className={`${styles.button} ${
+              loading ? styles.buttonDisabled : ""
+            }`}
           >
             {loading ? "Fiók létrehozása..." : "Regisztráció"}
           </button>

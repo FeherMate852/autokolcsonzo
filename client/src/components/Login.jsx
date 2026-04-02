@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import Toast from "./Toast";
 import styles from "../styles/Login.module.css";
 
@@ -8,6 +9,8 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -70,15 +73,31 @@ const Login = () => {
 
           <div className={styles.inputGroup}>
             <label className={styles.label}>Jelszó</label>
-            <input
-              className={styles.input}
-              type="password"
-              placeholder="••••••••"
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
+            <div className={styles.inputWrapper}>
+              <input
+                className={styles.input}
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
+              <button
+                type="button"
+                className={styles.eyeButton}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
+
+          <p className={styles.footerText}>
+            Elfelejtette a jelszavát?{" "}
+            <Link to="/forgot-password" className={styles.link}>
+              Kattintson ide!
+            </Link>
+          </p>
 
           <button
             disabled={loading}
