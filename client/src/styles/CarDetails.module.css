@@ -196,6 +196,7 @@
   border-radius: 1rem;
   margin-bottom: 1rem;
   border: 1px solid #f1f5f9;
+  position: relative;
 }
 
 .reviewsHeader {
@@ -297,6 +298,27 @@
 
 .submitReviewBtn:hover {
   background: #1e293b;
+}
+
+.deleteReviewBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.deleteReviewBtn:hover {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 .reviewCount {

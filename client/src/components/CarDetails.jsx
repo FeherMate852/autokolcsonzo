@@ -9,6 +9,7 @@ import {
   Star,
   Fuel,
   Settings2,
+  X,
 } from "lucide-react";
 import Toast from "./Toast";
 import styles from "../styles/CarDetails.module.css";
@@ -29,6 +30,7 @@ const CarDetails = () => {
   const reviewsPerPage = 3;
 
   const today = new Date().toISOString().split("T")[0];
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     axios.get(`/api/cars/${id}`).then((res) => setCar(res.data));
@@ -146,6 +148,27 @@ const CarDetails = () => {
     } catch (err) {
       setToast({
         message: err.response?.data?.message || "Hiba az értékelés küldésekor!",
+        type: "error",
+      });
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm("Biztosan törölni szeretnéd ezt az értékelést?"))
+      return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/reviews/${reviewId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Azonnal eltüntetjük a képernyőről is a törölt elemet
+      setReviews(reviews.filter((r) => r.id !== reviewId));
+      setToast({ message: "Értékelés sikeresen törölve!", type: "success" });
+    } catch (err) {
+      console.error("Hiba a törlésnél:", err);
+      setToast({
+        message: "Hiba történt az értékelés törlésekor!",
         type: "error",
       });
     }
@@ -299,6 +322,15 @@ const CarDetails = () => {
             ) : (
               currentReviews.map((rev) => (
                 <div key={rev.id} className={styles.reviewCard}>
+                  {user?.role === "admin" && (
+                    <button
+                      onClick={() => handleDeleteReview(rev.id)}
+                      className={styles.deleteReviewBtn}
+                      title="Értékelés törlése"
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
                   <div className={styles.reviewHeader}>
                     <strong>{rev.user_name}</strong>
                     <div className={styles.stars}>

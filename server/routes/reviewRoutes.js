@@ -4,7 +4,7 @@ const reviewController = require("../controllers/reviewController");
 const { verifyToken } = require("../middleWares/authMiddleware");
 
 router.get("/car/:carId", reviewController.getReviewsByCar);
-
 router.post("/", verifyToken, reviewController.addReview);
+router.delete("/:id", reviewController.deleteReview);
 
 module.exports = router;

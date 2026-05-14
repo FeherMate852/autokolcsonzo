@@ -43,3 +43,15 @@ exports.getReviewsByCar = async (req, res) => {
     res.status(500).json({ message: "Szerverhiba a vélemények betöltésekor." });
   }
 };
+
+exports.deleteReview = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query("DELETE FROM reviews WHERE id = $1", [id]);
+    res.status(200).json({ message: "Az értékelés sikeresen törölve!" });
+  } catch (error) {
+    console.error("Hiba az értékelés törlésekor:", error);
+    res.status(500).json({ error: "Szerverhiba történt a törlés során." });
+  }
+};
