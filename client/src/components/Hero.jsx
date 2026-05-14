@@ -27,9 +27,6 @@ const Hero = () => {
             >
               Böngészés
             </button>
-            <button className={`${styles.btn} ${styles.btnSecondary}`}>
-              Hogyan működik?
-            </button>
           </div>
         </div>
 
