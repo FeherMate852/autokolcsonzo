@@ -230,7 +230,7 @@ const CarDetails = () => {
             </div>
             <p className={styles.description}>
               "Tapasztalja meg a vezetés élményét ezzel a kiváló állapotú{" "}
-              {car.brand}-vel."
+              {car.brand} {car.model} gépjárművel."
             </p>
           </div>
         </div>
